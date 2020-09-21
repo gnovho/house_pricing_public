@@ -20,7 +20,7 @@ def get_list_district_url(headers: dict) -> list:
         .find_all('div', 'box-content link-hover-blue')
 
     district_container_value = district_container[0].find_all('a')
-    for i in range(0, len(district_container_value)):
+    for i in range(0, len(district_container_value)-1):
         district_url_list.append(district_container_value[i].get('href'))
 
     return district_url_list
@@ -33,7 +33,7 @@ def get_ward_navigate_url (headers: dict, rootUrl: str) -> list:
     list_url_navigate = []
 
     list_ward_html = ward_container[0].find_all('a')
-    for i in range(0, len(ward_container[0].find_all('a'))):
+    for i in range(0, len(ward_container[0].find_all('a'))-1):
         url_value = ward_container[0].find_all('a')
         list_url_navigate.append(url_value[i].get('href'))
 
@@ -59,7 +59,7 @@ def get_all_product_by_url (headers: dict, url: str, ward: str ,limitPage: int =
     while(len_prod>0 and page <= limitPage):
 
         #Parser data from a page
-        for i in range(0, len_prod):
+        for i in range(0, len_prod-1):
             tags_nha = "ban-nha"
             tags_can_ho = "ban-can-ho-chung-cu"
             house_container = product_container[i]
@@ -180,7 +180,7 @@ def crawler_start(i:int):
     list_ward_url = get_ward_navigate_url(headers, url)
 
     # crawler estate at ward page
-    for j in range(0, len(list_ward_url)):
+    for j in range(0, len(list_ward_url)-1):
         url_for_ward = root_page_url + list_ward_url[i]
         list_estate_append = get_all_product_by_url(headers, url_for_ward, list_ward_url[i],limitPage=20)
         list_estate.append(list_estate_append)
