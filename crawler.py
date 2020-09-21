@@ -6,6 +6,7 @@ import time
 import matplotlib.pyplot as plt
 import random
 import re
+import pandavro as pdx
 from multiprocess import Pool
 
 def get_list_district_url(headers: dict) -> list:
@@ -167,53 +168,57 @@ def get_all_product_by_url (headers: dict, url: str, ward: str ,limitPage: int =
     })
 
 
-def crawler_start() -> pd.DataFrame():
-    list_estate = pd.DataFrame()
-    headers = ({'User-Agent':
-            'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
+def crawler_start(i:int):
+    
+    headers = ({'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
     root_page_url = "https://batdongsan.com.vn"
     list_district_url = get_list_district_url(headers)
 
     # get district page
-    for i in range(0, len(list_district_url)):
-        url = root_page_url + list_district_url[i]
-        list_ward_url = get_ward_navigate_url(headers, url)
-
-        # crawler estate at ward page
-        for j in range(0, len(list_ward_url)):
-            url_for_ward = root_page_url + list_ward_url[i]
-            list_estate_append = get_all_product_by_url(headers, url_for_ward, list_ward_url[i],limitPage=3)
-            list_estate.append(list_estate_append)
-
-            # sleep
-            time.sleep(random.randint(1,2))
-
-def crawler_start_test() -> pd.DataFrame():
     list_estate = pd.DataFrame()
-    headers = ({'User-Agent':
-            'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
+    url = root_page_url + list_district_url[i]
+    list_ward_url = get_ward_navigate_url(headers, url)
+
+    # crawler estate at ward page
+    for j in range(0, len(list_ward_url)):
+        url_for_ward = root_page_url + list_ward_url[i]
+        list_estate_append = get_all_product_by_url(headers, url_for_ward, list_ward_url[i],limitPage=20)
+        list_estate.append(list_estate_append)
+
+        # sleep
+        time.sleep(random.randint(1,2))
+
+        print("Get Done Data at district {0}, ward {1}".format(list_district_url[i] , list_ward_url[j]))
+    
+    # write file to patch avro 
+    pdx.to_avro("./house_pricing_" + str(i), list_estate)
+
+    print("finish")
+
+def crawler_start_(i):
+    return crawler_start(i)
+
+
+def crawl_multi_thread (n_process: int):
+    list_estate = pd.DataFrame()
+
+    headers = ({'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
     root_page_url = "https://batdongsan.com.vn"
     list_district_url = get_list_district_url(headers)
+    print("Number of district {0}".format(len(list_district_url)))
 
-    # get district page
-    for i in range(0, 2):
-        url = root_page_url + list_district_url[i]
-        list_ward_url = get_ward_navigate_url(headers, url)
+    if (n_process == 1):
+        list_estate = crawler_start()
+    else:
+        with Pool(n_process) as pool:
+            for v in pool.imap(crawler_start_, range(0, len(list_district_url))):
+                print(v)
 
-        # crawler estate at ward page
-        for j in range(0, 2):
-            url_for_ward = root_page_url + list_ward_url[j]
-            list_estate_append = get_all_product_by_url(headers, url_for_ward, list_ward_url[j], limitPage=3)
-            list_estate = list_estate.append(list_estate_append)
-
-            # sleep
-            time.sleep(random.randint(1,2))
-
-            print("Get Done Data at district {0}, ward {1}".format(list_district_url[i] , list_ward_url[j]))
-
-    return list_estate
 
 def __main__(): 
-  crawler_start_test()
+  crawl_multi_thread(30)
+
+
+# exe
 
 __main__()
