@@ -181,8 +181,8 @@ def crawler_start(i:int):
 
     # crawler estate at ward page
     for j in range(0, len(list_ward_url)-1):
-        url_for_ward = root_page_url + list_ward_url[i]
-        list_estate_append = get_all_product_by_url(headers, url_for_ward, list_ward_url[i],limitPage=20)
+        url_for_ward = root_page_url + list_ward_url[j]
+        list_estate_append = get_all_product_by_url(headers, url_for_ward, list_ward_url[j],limitPage=20)
         list_estate.append(list_estate_append)
 
         # sleep
