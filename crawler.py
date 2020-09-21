@@ -137,9 +137,9 @@ def get_all_product_by_url (headers: dict, url: str, ward: str ,limitPage: int =
             
 
             #description
-            description_value = house_container.find_all('div', 'product-content')[0].text
+            description_value = house_container.find_all('div', 'product-content')
             if (len(description_value) > 0 ):
-                description.append(description_value)
+                description.append(description_value[0].text)
             else: 
                 description.append("")
 
