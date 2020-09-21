@@ -211,7 +211,7 @@ def crawl_multi_thread (n_process: int):
         list_estate = crawler_start()
     else:
         with Pool(n_process) as pool:
-            for v in pool.imap(crawler_start_, range(0, len(list_district_url))):
+            for v in pool.imap(crawler_start_, range(0, len(list_district_url)-1)):
                 print(v)
 
 
