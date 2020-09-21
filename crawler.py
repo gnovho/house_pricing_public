@@ -56,7 +56,7 @@ def get_all_product_by_url (headers: dict, url: str, ward: str ,limitPage: int =
     len_prod = len(product_container)
     page = 1
 
-    while(len_prod>0 and page <= 3):
+    while(len_prod>0 and page <= limitPage):
 
         #Parser data from a page
         for i in range(0, len_prod):
