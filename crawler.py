@@ -194,8 +194,8 @@ def crawler_start(i:int):
 
         print("Get Done Data at district {0}, ward {1}".format(list_district_url[i] , list_ward_url[j]))
     
-    # write file to patch avro 
-    pdx.to_avro("./house_pricing_" + str(i) + ".avro", list_estate)
+        # write file to patch avro 
+        pdx.to_avro("./house_pricing_" + str(i) + "_" + str(j)  +".avro", list_estate)
 
     print("finish")
 
