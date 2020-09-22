@@ -129,11 +129,15 @@ def get_all_product_by_url (headers: dict, url: str, ward: str ,limitPage: int =
             zone_value = house_container.find_all('span', 'location')
             if (len(zone_value) >0):
                 zone.append(zone_value[0].text)
+            else:
+                zone.append("")
 
             #date
             date_value = house_container.find_all('span', 'tooltip-time')
             if (len(date_value) > 0): 
                 date.append(date_value[0].text)
+            else:
+                date.append("")
             
 
             #description
@@ -216,7 +220,7 @@ def crawl_multi_thread (n_process: int):
 
 
 def __main__(): 
-  crawl_multi_thread(30)
+  crawl_multi_thread(20)
 
 
 # exe
