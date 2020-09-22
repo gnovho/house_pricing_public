@@ -157,7 +157,7 @@ def get_all_product_by_url (headers: dict, url: str, ward: str ,limitPage: int =
         html_soup = BeautifulSoup(nextPage.text, 'html.parser')
         product_container = html_soup.find_all('div', 'product-main')
         len_prod = len(product_container)
-        print(page-1)
+        print(page)
 
     return pd.DataFrame({
         'Title': title,
@@ -195,7 +195,7 @@ def crawler_start(i:int):
         print("Get Done Data at district {0}, ward {1}".format(list_district_url[i] , list_ward_url[j]))
     
     # write file to patch avro 
-    pdx.to_avro("./house_pricing_" + str(i), list_estate)
+    pdx.to_avro("./house_pricing_" + str(i) + ".avro", list_estate)
 
     print("finish")
 
