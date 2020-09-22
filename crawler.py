@@ -206,7 +206,7 @@ def crawler_start(i:int, district_url:str):
         # sleep
         time.sleep(random.randint(1,2))
 
-        print("Get Done Data at district {0}, ward {1}".format(list_district_url[i] , list_ward_url[j]))
+        print("Get Done Data at district {0}, ward {1}".format(district_url , list_ward_url[j]))
     
         # write file to patch avro 
         pdx.to_avro("./house_pricing_" + str(i) + "_" + str(j)  +".avro", list_estate)
