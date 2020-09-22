@@ -77,10 +77,7 @@ def get_all_product_by_url (headers: dict, url: str, ward: str ,limitPage: int =
             #title pose 
             title_value_ = house_container.a.get('title')
             if (len(title_value) > 0 ): 
-                title_value = title_value_
-    
-            #ward
-            ward_list.append(ward)
+                title_value = title_value_        
 
             #title nha_ban/chung_cu
             kind_house = house_container.find_all('a', 'vipZero product-link')
@@ -223,26 +220,15 @@ def crawler_start_(i):
     return crawler_start(i, list_district_url[i])
 
 
-def crawl_multi_thread (n_process: int):
-    list_estate = pd.DataFrame()
-
-    headers = ({'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
-    list_district_url = get_list_district_url(headers)
-
-    print("Number of district {0}".format(len(list_district_url)))
-
-    if (n_process == 1):
-        list_estate = crawler_start(0)
-    else:
-        with Pool(n_process) as pool:
-            for v in pool.imap(crawler_start_, range(0, len(list_district_url)-1)):
-                print(v)
 
 
 def __main__(): 
-  crawl_multi_thread(20)
+    headers = ({'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
+    list_district_url = get_list_district_url(headers)
+
+    for i in range(0, len(list_district_url)): 
+        crawler_start(i, list_district_url[i])
 
 
-# exe
 
 __main__()
