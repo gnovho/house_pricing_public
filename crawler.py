@@ -172,7 +172,7 @@ def get_all_product_by_url (headers: dict, url: str, ward: str ,limitPage: int =
         html_soup = BeautifulSoup(nextPage.text, 'html.parser')
         product_container = html_soup.find_all('div', 'product-main')
         len_prod = len(product_container)
-        print(page)
+        print("page_{0}".format(page))
 
     return pd.DataFrame({
         'Title': title,
@@ -198,10 +198,10 @@ def crawler_start(i:int, district_url:str):
     list_ward_url = get_ward_navigate_url(headers, url)
 
     # crawler estate at ward page
-    for j in range(0, len(list_ward_url)-1):
+    for j in range(0, len(list_ward_url)-1): # edit here for ward
         url_for_ward = root_page_url + list_ward_url[j]
-        list_estate_append = get_all_product_by_url(headers, url_for_ward, list_ward_url[j],limitPage=20)
-        list_estate.append(list_estate_append)
+        list_estate_append = get_all_product_by_url(headers, url_for_ward, list_ward_url[j],limitPage=20) # edit here for page
+        list_estate = list_estate.append(list_estate_append)
 
         # sleep
         time.sleep(random.randint(1,2))
@@ -209,7 +209,7 @@ def crawler_start(i:int, district_url:str):
         print("Get Done Data at district {0}, ward {1}".format(district_url , list_ward_url[j]))
     
         # write file to patch avro 
-        pdx.to_avro("./house_pricing_" + str(i) + "_" + str(j)  +".avro", list_estate)
+        list_estate.to_csv("house_pricing_{0}_{1}".format(i, j))
 
     print("finish")
 
@@ -217,17 +217,27 @@ def crawler_start_(i):
     headers = ({'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
     list_district_url = get_list_district_url(headers)
 
-    return crawler_start(i, list_district_url[i])
+    return crawler_start(i, list_district_url[i]) #edit here for ward
 
+def multithread(n_process: int):
+    list_estate = pd.DataFrame()
+    headers = ({'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
+    root_page_url = "https://batdongsan.com.vn"
 
+    list_district_url = get_list_district_url(headers)
+
+    print("Number of district {0}".format(len(list_district_url)))
+    if (n_process == 1):
+        for i in range(0, len(list_district_url)-1):
+            list_estate = crawler_start_(i)
+    else:
+        with Pool(n_process) as pool:
+            for v in pool.imap(crawler_start_, range(0, len(list_district_url)-1)):
+                print(v)
 
 
 def __main__(): 
-    headers = ({'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
-    list_district_url = get_list_district_url(headers)
-
-    for i in range(0, len(list_district_url)): 
-        crawler_start(i, list_district_url[i])
+    multithread(20)
 
 
 
