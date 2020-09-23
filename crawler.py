@@ -76,7 +76,7 @@ def get_all_product_by_url (headers: dict, url: str, ward: str ,limitPage: int =
 
             #title pose 
             title_value_ = house_container.a.get('title')
-            if (len(title_value) > 0 ): 
+            if (len(title_value_) > 0 ): 
                 title_value = title_value_        
 
             #title nha_ban/chung_cu
