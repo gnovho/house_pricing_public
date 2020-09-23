@@ -174,6 +174,7 @@ def get_all_product_by_url (headers: dict, url: str, ward: str ,limitPage: int =
         len_prod = len(product_container)
         print("page_{0}".format(page))
 
+
     return pd.DataFrame({
         'Title': title,
         'Ward' : ward_list,
@@ -200,14 +201,15 @@ def crawler_start(i:int, district_url:str):
     # crawler estate at ward page
     for j in range(0, len(list_ward_url)-1): # edit here for ward
         url_for_ward = root_page_url + list_ward_url[j]
+
+        # get products per ward
         list_estate_append = get_all_product_by_url(headers, url_for_ward, list_ward_url[j],limitPage=20) # edit here for page
         list_estate = list_estate.append(list_estate_append)
 
         # sleep
         time.sleep(random.randint(1,2))
-
         print("Get Done Data at district {0}, ward {1}".format(district_url , list_ward_url[j]))
-    
+
         # write file to patch avro 
         list_estate.to_csv("house_pricing_{0}_{1}".format(i, j))
 
